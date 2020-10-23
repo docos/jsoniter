@@ -218,8 +218,14 @@ var safeSet = [utf8.RuneSelf]bool{
 var hex = "0123456789abcdef"
 
 // WriteStringWithHTMLEscaped write string to stream with html special characters escaped
+func(stream*Stream) WriteString2Graphql(s string){
+
+}
 func (stream *Stream) WriteStringWithHTMLEscaped(s string) {
 	valLen := len(s)
+	if(stream.isGraphql()){
+		stream.buf = append(stream.buf, '\\')
+	}
 	stream.buf = append(stream.buf, '"')
 	// write string, the fast path, without utf8 and escape support
 	i := 0
@@ -232,6 +238,9 @@ func (stream *Stream) WriteStringWithHTMLEscaped(s string) {
 		}
 	}
 	if i == valLen {
+		if(stream.isGraphql()){
+			stream.buf = append(stream.buf, '\\')
+		}
 		stream.buf = append(stream.buf, '"')
 		return
 	}
@@ -306,11 +315,23 @@ func writeStringSlowPathWithHTMLEscaped(stream *Stream, i int, s string, valLen 
 	}
 	stream.writeByte('"')
 }
-
+func (stream*Stream)isGraphql()bool{
+	if stream.cfg!=nil && stream.cfg.mashGraphQL {
+		return true
+	}
+	return false
+}
 // WriteString write string to stream without html escape
 func (stream *Stream) WriteString(s string) {
 	valLen := len(s)
-	stream.buf = append(stream.buf, '"')
+	if stream.isGraphql() {
+		if(!stream.beginFiled){
+			stream.buf = append(stream.buf, '\\')
+			stream.buf = append(stream.buf, '"')
+		}
+	}else{
+		stream.buf = append(stream.buf, '"')
+	}
 	// write string, the fast path, without utf8 and escape support
 	i := 0
 	for ; i < valLen; i++ {
@@ -322,7 +343,14 @@ func (stream *Stream) WriteString(s string) {
 		}
 	}
 	if i == valLen {
-		stream.buf = append(stream.buf, '"')
+		if stream.isGraphql() {
+			if(!stream.beginFiled){
+				stream.buf = append(stream.buf, '\\')
+				stream.buf = append(stream.buf, '"')
+			}
+		}else{
+			stream.buf = append(stream.buf, '"')
+		}
 		return
 	}
 	writeStringSlowPath(stream, i, s, valLen)

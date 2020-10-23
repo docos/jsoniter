@@ -43,6 +43,9 @@ func MarshalIndent(v interface{}, prefix, indent string) ([]byte, error) {
 func MarshalToString(v interface{}) (string, error) {
 	return ConfigDefault.MarshalToString(v)
 }
+func MarshalToGraphQL(v interface{}) (string, error) {
+	return ConfigGraphQL.MarshalToString(v)
+}
 
 // NewDecoder adapts to json/stream NewDecoder API.
 //
