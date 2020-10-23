@@ -203,7 +203,7 @@ func (encoder *stringModeStringEncoder) Encode(ptr unsafe.Pointer, stream *Strea
 	tempStream.Attachment = stream.Attachment
 	defer encoder.cfg.ReturnStream(tempStream)
 	encoder.elemEncoder.Encode(ptr, tempStream)
-	stream.WriteString(string(tempStream.Buffer()),false)
+	stream.WriteString(string(tempStream.Buffer()))
 }
 
 func (encoder *stringModeStringEncoder) IsEmpty(ptr unsafe.Pointer) bool {

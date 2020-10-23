@@ -13,6 +13,7 @@ type Stream struct {
 	Error      error
 	indention  int
 	Attachment interface{} // open for customized encoder
+	writingFiled bool
 }
 
 // NewStream create new stream instance.
@@ -152,7 +153,9 @@ func (stream *Stream) WriteObjectStart() {
 
 // WriteObjectField write "field": with possible indention
 func (stream *Stream) WriteObjectField(field string) {
-	stream.WriteString(field,true)
+	stream.writingFiled =true
+	stream.WriteString(field)
+	stream.writingFiled =false
 	if stream.indention > 0 {
 		stream.writeTwoBytes(':', ' ')
 	} else {

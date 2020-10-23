@@ -101,11 +101,23 @@ func (encoder *marshalerEncoder) Encode(ptr unsafe.Pointer, stream *Stream) {
 	} else {
 		// html escape was already done by jsoniter
 		// but the extra '\n' should be trimed
+		stream.writeGraphql();
 		l := len(bytes)
 		if l > 0 && bytes[l-1] == '\n' {
 			bytes = bytes[:l-1]
 		}
+		//**
+		l = len(bytes)
+		if l>0 && bytes[0]=='"'{
+			bytes = bytes[1:]
+		}
+		l = len(bytes)
+		if l>0 && bytes[l-1] =='"'{
+			bytes = bytes[:l-1]
+		}
+		//**
 		stream.Write(bytes)
+		stream.writeGraphql();
 	}
 }
 

@@ -223,10 +223,10 @@ func(stream*Stream) WriteString2Graphql(s string){
 }
 func (stream *Stream) WriteStringWithHTMLEscaped(s string) {
 	valLen := len(s)
-	if(stream.isGraphql()){
-		stream.buf = append(stream.buf, '\\')
+	if(!stream.writeGraphql()){
+		stream.buf = append(stream.buf, '"')
 	}
-	stream.buf = append(stream.buf, '"')
+	
 	// write string, the fast path, without utf8 and escape support
 	i := 0
 	for ; i < valLen; i++ {
@@ -238,10 +238,9 @@ func (stream *Stream) WriteStringWithHTMLEscaped(s string) {
 		}
 	}
 	if i == valLen {
-		if(stream.isGraphql()){
-			stream.buf = append(stream.buf, '\\')
+		if(!stream.writeGraphql()){
+			stream.buf = append(stream.buf, '"')
 		}
-		stream.buf = append(stream.buf, '"')
 		return
 	}
 	writeStringSlowPathWithHTMLEscaped(stream, i, s, valLen)
@@ -313,7 +312,10 @@ func writeStringSlowPathWithHTMLEscaped(stream *Stream, i int, s string, valLen 
 	if start < len(s) {
 		stream.WriteRaw(s[start:])
 	}
-	stream.writeByte('"')
+	if(!stream.writeGraphql()){
+		stream.writeByte('"')
+	}
+	
 }
 func (stream*Stream)isGraphql()bool{
 	if stream.cfg!=nil && stream.cfg.mashGraphQL {
@@ -321,15 +323,20 @@ func (stream*Stream)isGraphql()bool{
 	}
 	return false
 }
-// WriteString write string to stream without html escape
-func (stream *Stream) WriteString(s string,isField bool) {
-	valLen := len(s)
+func(stream*Stream)writeGraphql()bool{
 	if stream.isGraphql() {
-		if(!isField){
+		if(!stream.writingFiled){
 			stream.buf = append(stream.buf, '\\')
 			stream.buf = append(stream.buf, '"')
 		}
-	}else{
+		return  true
+	}
+	return false
+}
+// WriteString write string to stream without html escape
+func (stream *Stream) WriteString(s string) {
+	valLen := len(s)
+	if !stream.writeGraphql() {
 		stream.buf = append(stream.buf, '"')
 	}
 	// write string, the fast path, without utf8 and escape support
@@ -343,12 +350,7 @@ func (stream *Stream) WriteString(s string,isField bool) {
 		}
 	}
 	if i == valLen {
-		if stream.isGraphql() {
-			if(!isField){
-				stream.buf = append(stream.buf, '\\')
-				stream.buf = append(stream.buf, '"')
-			}
-		}else{
+		if !stream.writeGraphql() { 
 			stream.buf = append(stream.buf, '"')
 		}
 		return

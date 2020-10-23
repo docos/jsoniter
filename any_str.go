@@ -158,7 +158,7 @@ func (any *stringAny) ToString() string {
 }
 
 func (any *stringAny) WriteTo(stream *Stream) {
-	stream.WriteString(any.val,false)
+	stream.WriteString(any.val)
 }
 
 func (any *stringAny) GetInterface() interface{} {

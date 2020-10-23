@@ -48,7 +48,7 @@ func Test_writeRaw_should_grow_buffer(t *testing.T) {
 func Test_writeString_should_grow_buffer(t *testing.T) {
 	should := require.New(t)
 	stream := NewStream(ConfigDefault, nil, 0)
-	stream.WriteString("123",false)
+	stream.WriteString("123")
 	should.Nil(stream.Error)
 	should.Equal(`"123"`, string(stream.Buffer()))
 }
