@@ -322,10 +322,10 @@ func (stream*Stream)isGraphql()bool{
 	return false
 }
 // WriteString write string to stream without html escape
-func (stream *Stream) WriteString(s string) {
+func (stream *Stream) WriteString(s string,isField bool) {
 	valLen := len(s)
 	if stream.isGraphql() {
-		if(!stream.beginFiled){
+		if(!isField){
 			stream.buf = append(stream.buf, '\\')
 			stream.buf = append(stream.buf, '"')
 		}
@@ -344,7 +344,7 @@ func (stream *Stream) WriteString(s string) {
 	}
 	if i == valLen {
 		if stream.isGraphql() {
-			if(!stream.beginFiled){
+			if(!isField){
 				stream.buf = append(stream.buf, '\\')
 				stream.buf = append(stream.buf, '"')
 			}

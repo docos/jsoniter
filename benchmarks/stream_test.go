@@ -43,7 +43,7 @@ func encodeObject(stream *jsoniter.Stream) {
 
 	stream.WriteMore()
 	stream.WriteObjectField("name")
-	stream.WriteString("Jane Doe")
+	stream.WriteString("Jane Doe",false)
 
 	stream.WriteMore()
 	stream.WriteObjectField("address")
@@ -53,7 +53,7 @@ func encodeObject(stream *jsoniter.Stream) {
 			stream.WriteMore()
 		}
 		stream.WriteObjectField(field.key)
-		stream.WriteString(field.val)
+		stream.WriteString(field.val,false)
 	}
 
 	stream.WriteMore()
@@ -77,7 +77,7 @@ func encodeObject(stream *jsoniter.Stream) {
 		if i != 0 {
 			stream.WriteMore()
 		}
-		stream.WriteString(s)
+		stream.WriteString(s,false)
 	}
 	stream.WriteArrayEnd()
 
@@ -87,7 +87,7 @@ func encodeObject(stream *jsoniter.Stream) {
 			stream.WriteMore()
 		}
 		stream.WriteObjectField("longText" + strconv.Itoa(i))
-		stream.WriteString(text)
+		stream.WriteString(text,false)
 	}
 
 	for i := 0; i < 25; i++ {

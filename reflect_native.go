@@ -211,7 +211,7 @@ func (codec *stringCodec) Decode(ptr unsafe.Pointer, iter *Iterator) {
 
 func (codec *stringCodec) Encode(ptr unsafe.Pointer, stream *Stream) {
 	str := *((*string)(ptr))
-	stream.WriteString(str)
+	stream.WriteString(str,false)
 }
 
 func (codec *stringCodec) IsEmpty(ptr unsafe.Pointer) bool {
