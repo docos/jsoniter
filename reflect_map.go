@@ -260,7 +260,10 @@ func (encoder *mapEncoder) Encode(ptr unsafe.Pointer, stream *Stream) {
 			stream.WriteMore()
 		}
 		key, elem := iter.UnsafeNext()
+		oldStatus := stream.writingFiled
+		stream.writingFiled = true
 		encoder.keyEncoder.Encode(key, stream)
+		stream.writingFiled = oldStatus
 		if stream.indention > 0 {
 			stream.writeTwoBytes(byte(':'), byte(' '))
 		} else {
