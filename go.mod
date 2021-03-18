@@ -1,5 +1,4 @@
-module github.com/json-iterator/go
-
+module github.com/docos/jsoniter
 go 1.12
 
 require (
