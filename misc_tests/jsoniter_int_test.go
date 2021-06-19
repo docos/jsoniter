@@ -11,7 +11,7 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/json-iterator/go"
+	"github.com/docos/jsoniter"
 	"github.com/stretchr/testify/require"
 )
 
